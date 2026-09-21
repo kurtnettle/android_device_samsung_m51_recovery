@@ -29,10 +29,16 @@ on init
     write /sys/class/backlight/panel0-backlight/brightness 200
     setprop sys.usb.configfs 1
 
+on boot
+    setprop ro.boot.vbmeta.avb_version 1.1
+    setprop ro.boot.avb_version 1.1
+
 on property:ro.boot.usbcontroller=*
     setprop sys.usb.controller ${ro.boot.usbcontroller}
     write /sys/class/udc/${ro.boot.usbcontroller}/device/../mode peripheral
 
 on fs
+    export ANDROID_ROOT /system_root
+
     wait /dev/block/platform/soc/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
