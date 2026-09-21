@@ -1,5 +1,4 @@
-# Android device tree for SM-M515F (m51)
-
+# OrangeFox Recovery device tree for the Samsung Galaxy M51 (Qualcomm)
 
 | Basic                   | Spec Sheet                                                                                                                     |
 | -----------------------:|:------------------------------------------------------------------------------------------------------------------------------ |
