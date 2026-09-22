@@ -7,6 +7,10 @@
 
 DEVICE_PATH := device/samsung/m51
 
+# Android Verified Boot
+BOARD_AVB_ENABLE := false
+BOARD_BUILD_DISABLED_VBMETAIMAGE := true
+
 # For building with minimal manifest
 ALLOW_MISSING_DEPENDENCIES := true
 
