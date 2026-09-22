@@ -14,3 +14,6 @@
 /prism         ext4  /dev/block/bootdevice/by-name/prism      flags=display="Prism";backup=1;wipeingui
 
 /data          f2fs  /dev/block/bootdevice/by-name/userdata   flags=display="Data";backup=1;wipeingui
+
+/external_sd	vfat	/dev/block/mmcblk0p1	/dev/block/mmcblk0		flags=display="External SD";storage;wipeingui;removable
+/usb-otg		auto	/dev/block/sde1	        /dev/block/sde			flags=display="USB-OTG";storage;wipeingui;removable
