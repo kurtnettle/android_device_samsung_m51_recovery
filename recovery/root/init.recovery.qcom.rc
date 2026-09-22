@@ -43,3 +43,9 @@ on fs
 
     wait /dev/block/platform/soc/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
+
+    # flashlight fix
+    mkdir /dev/leds 0755 root root
+    mkdir /dev/leds/rear_torch 0755 root root
+    symlink /sys/class/camera/flash/rear_torch_flash /dev/leds/rear_torch/brightness
+    write /dev/leds/rear_torch/max_brightness 1
