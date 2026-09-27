@@ -123,8 +123,6 @@ TARGET_USES_LOGD:=false
 # thermal_zone28: cpu-1-2-usr
 # thermal_zone29: cpu-1-3-usr
 TW_CUSTOM_CPU_TEMP_PATH:=/sys/devices/virtual/thermal/thermal_zone18/temp
-
-TW_CUSTOM_BATTERY_PATH:=/sys/class/power_supply/battery/capacity
 OF_FL_PATH1:=/tmp/flashlight
 
 TW_MAX_BRIGHTNESS:=300
