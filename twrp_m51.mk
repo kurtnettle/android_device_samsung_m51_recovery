@@ -8,10 +8,6 @@
 # Inherit from m51 device
 $(call inherit-product, device/samsung/m51/device.mk)
 
-# Inherit some common Omni stuff.
-$(call inherit-product, vendor/twrp/config/common.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
-
 PRODUCT_DEVICE := m51
 PRODUCT_NAME := twrp_m51
 PRODUCT_BRAND := samsung
