@@ -11,120 +11,150 @@ DEVICE_PATH := device/samsung/m51
 BOARD_AVB_ENABLE := false
 BOARD_BUILD_DISABLED_VBMETAIMAGE := true
 
+# Prebuilt AVB key for GSIs
+BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
+BOARD_AVB_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
+
 # For building with minimal manifest
 ALLOW_MISSING_DEPENDENCIES := true
 
 # Architecture
 TARGET_ARCH := arm64
-TARGET_ARCH_VARIANT := armv8-a
+TARGET_ARCH_VARIANT := armv8-2a
 TARGET_CPU_ABI := arm64-v8a
-TARGET_CPU_ABI2 := 
-TARGET_CPU_VARIANT := generic
-TARGET_CPU_VARIANT_RUNTIME := generic
+TARGET_CPU_ABI2 :=
+TARGET_CPU_VARIANT := cortex-a76
 
+# 2nd Architecture
 TARGET_2ND_ARCH := arm
-TARGET_2ND_ARCH_VARIANT := armv7-a-neon
+TARGET_2ND_ARCH_VARIANT := armv8-2a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
-TARGET_2ND_CPU_VARIANT := generic
-TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a9
+TARGET_2ND_CPU_VARIANT := cortex-a55
 
-# APEX
-DEXPREOPT_GENERATE_APEX_IMAGE := true
+TARGET_SUPPORTS_64_BIT_APPS := true
 
-# Bootloader
-TARGET_BOOTLOADER_BOARD_NAME := sm6150
-TARGET_NO_BOOTLOADER := true
+# CPUSets and Sched
+ENABLE_CPUSETS := true
+ENABLE_SCHEDBOOST := true
 
-# Display
-TARGET_SCREEN_DENSITY := 420
+# Assert
+TARGET_OTA_ASSERT_DEVICE := m51
 
-# Kernel
+# Kernel: Base flags
+BOARD_KERNEL_CMDLINE := loglevel=8 log_buf_len=2M androidboot.hardware=qcom androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=1 androidboot.usbcontroller=a600000.dwc3 printk.devkmsg=on firmware_class.path=/vendor/firmware_mnt/image androidboot.selinux=permissive
 BOARD_BOOTIMG_HEADER_VERSION := 2
-BOARD_KERNEL_BASE := 0x00000000
-BOARD_KERNEL_CMDLINE := console=null androidboot.hardware=qcom androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=1 androidboot.usbcontroller=a600000.dwc3 firmware_class.path=/vendor/firmware_mnt/image nokaslr printk.devkmsg=on androidboot.selinux=permissive buildvariant=eng
-BOARD_KERNEL_PAGESIZE := 4096
-BOARD_RAMDISK_OFFSET := 0x02000000
+
+# Kernel: Board (kernel...) flags
+BOARD_NAME               := SRPTD22A006
+BOARD_KERNEL_BASE        := 0x00000000
+BOARD_KERNEL_PAGESIZE    := 4096
+BOARD_RAMDISK_OFFSET     := 0x02000000
 BOARD_KERNEL_TAGS_OFFSET := 0x01e00000
-BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
+
+# Kernel: mkbootimgs args
 BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
-BOARD_KERNEL_IMAGE_NAME := Image
-BOARD_INCLUDE_DTB_IN_BOOTIMG := true
-BOARD_KERNEL_SEPARATED_DTBO := true
-TARGET_KERNEL_CONFIG := m51_defconfig
-TARGET_KERNEL_SOURCE := kernel/samsung/m51
-
-# Kernel - prebuilt
-TARGET_FORCE_PREBUILT_KERNEL := true
-ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
-TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
-TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
+BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
 BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
-BOARD_INCLUDE_DTB_IN_BOOTIMG := 
-BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
-BOARD_KERNEL_SEPARATED_DTBO := 
-endif
+BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
+BOARD_MKBOOTIMG_ARGS += --board $(BOARD_NAME)
 
-# Partitions
-BOARD_FLASH_BLOCK_SIZE := 262144 # (BOARD_KERNEL_PAGESIZE * 64)
-BOARD_BOOTIMAGE_PARTITION_SIZE := 33619968
-BOARD_RECOVERYIMAGE_PARTITION_SIZE := 33619968
-BOARD_HAS_LARGE_FILESYSTEM := true
-BOARD_SYSTEMIMAGE_PARTITION_TYPE := ext4
-BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-TARGET_COPY_OUT_VENDOR := vendor
-BOARD_SUPER_PARTITION_SIZE := 9126805504 # TODO: Fix hardcoded value
-BOARD_SUPER_PARTITION_GROUPS := samsung_dynamic_partitions # `lpdump /dev/block/by-name/super`
-BOARD_SAMSUNG_DYNAMIC_PARTITIONS_PARTITION_LIST := system system vendor vendor product product odm odm # `lpdump /dev/block/by-name/super`
-BOARD_SAMSUNG_DYNAMIC_PARTITIONS_SIZE := 9122611200 # TODO: Fix hardcoded value
+# Prebuilt: Kernel
+TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/Image.gz
+BOARD_KERNEL_IMAGE_NAME := Image.gz
 
-# Platform
-TARGET_BOARD_PLATFORM := sm6150
+# Prebuilt: DTB
+TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb
 
-# Recovery
+# Prebuilt: DTBO
+BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo
 BOARD_INCLUDE_RECOVERY_DTBO := true
-TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
-TARGET_USERIMAGES_USE_EXT4 := true
-TARGET_USERIMAGES_USE_F2FS := true
 
-TARGET_RECOVERY_QCOM_RTC_FIX := true
+# Platform: Bootloader
+TARGET_NO_BOOTLOADER := true
+TARGET_BOOTLOADER_BOARD_NAME := sm6150
 
-# Hack: prevent anti rollback
-PLATFORM_SECURITY_PATCH := 2099-12-31
-VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
+# Platform: Board
+TARGET_BOARD_PLATFORM := sm6150
+TARGET_BOARD_PLATFORM_GPU := qcom-adreno618
+QCOM_BOARD_PLATFORMS += $(TARGET_BOARD_PLATFORM)
+
+# Encryption: Setup it
+TW_INCLUDE_CRYPTO := true
+TW_INCLUDE_CRYPTO_FBE := true
+TW_INCLUDE_FBE_METADATA_DECRYPT := true
+BOARD_USES_QCOM_FBE_DECRYPTION := true
+BOARD_USES_METADATA_PARTITION := true
+
 PLATFORM_VERSION := 99.87.36
+PLATFORM_SECURITY_PATCH :=  2127-12-31
+VENDOR_SECURITY_PATCH :=  2127-12-31
 PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
 
-# TWRP Configuration
+# File systems
+BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE   := ext4
+BOARD_SYSTEMIMAGE_PARTITION_TYPE     := ext4
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
+TARGET_USES_MKE2FS := true
+
+# Target copy out
+TARGET_COPY_OUT_VENDOR := vendor
+
+# Extras
+BOARD_ROOT_EXTRA_FOLDERS := persist efs sec_efs firmware metadata
+TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
+
+# Partition: Size
+BOARD_DTBOIMAGE_PARTITION_SIZE     := 10485760
+BOARD_BOOTIMAGE_PARTITION_SIZE     := 67108864
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 82726912
+
+# Recovery
+TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
+BOARD_HAS_NO_SELECT_BUTTON := true
+RECOVERY_SDCARD_ON_DATA := true
+BOARD_FLASH_BLOCK_SIZE := 262144
+LZMA_RAMDISK_TARGETS := recovery
+BOARD_RAMDISK_USE_LZMA := true
+
+# Partitions
+BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
+BOARD_SUPER_PARTITION_SIZE := 8053063680
+BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 8048869376
+BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system vendor product odm
+
+# TWRP Configuration: Basic config
+TW_DEVICE_VERSION := kurtnettle
 TW_THEME := portrait_hdpi
-TW_EXTRA_LANGUAGES:=false
-TW_INCLUDE_NTFS_3G:=true
+TW_EXTRA_LANGUAGES := false
+TARGET_RECOVERY_QCOM_RTC_FIX := true
 TW_SCREEN_BLANK_ON_BOOT := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
-TW_USE_TOOLBOX := true
+TW_NO_REBOOT_BOOTLOADER := true
 TW_HAS_DOWNLOAD_MODE := true
-TW_EXCLUDE_TWRPAPP := true
+TW_EXCLUDE_DEFAULT_USB_INIT := true
+TW_INCLUDE_NTFS_3G := false
+TW_NO_EXFAT_FUSE := true
+TW_INCLUDE_RESETPROP := true
 
-TWRP_INCLUDE_LOGCAT:=false
-TARGET_USES_LOGD:=false
+# TWRP Configuration: Brightness/CPU
+TW_CUSTOM_CPU_TEMP_PATH := /sys/class/thermal/thermal_zone18/temp
+TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel0-backlight/brightness"
+TW_MAX_BRIGHTNESS := 425
+TW_DEFAULT_BRIGHTNESS := 200
 
-# thermal_zone18: cpu-0-0-usr
-# thermal_zone19: cpu-0-1-usr
-# thermal_zone20: cpu-0-2-usr
-# thermal_zone21: cpu-0-3-usr
-# thermal_zone22: cpu-0-4-usr
-# thermal_zone23: cpu-0-5-usr
-# thermal_zone24: cpuss-0-usr
-# thermal_zone25: cpuss-1-usr
-# thermal_zone26: cpu-1-0-usr
-# thermal_zone27: cpu-1-1-usr
-# thermal_zone28: cpu-1-2-usr
-# thermal_zone29: cpu-1-3-usr
-TW_CUSTOM_CPU_TEMP_PATH:=/sys/devices/virtual/thermal/thermal_zone18/temp
-OF_FL_PATH1:=/tmp/flashlight
+# Backups
+TW_BACKUP_EXCLUSIONS := /data/fonts
 
-TW_MAX_BRIGHTNESS:=300
-TW_DEFAULT_BRIGHTNESS:=100
-TW_BRIGHTNESS_PATH:="/sys/class/backlight/panel0-backlight/brightness"
+# Display
+TW_NO_SCREEN_BLANK := true
+
+# Debug
+TARGET_USES_LOGD                := true
+TWRP_INCLUDE_LOGCAT             := true
+TW_CRYPTO_SYSTEM_VOLD_DEBUG     := true
